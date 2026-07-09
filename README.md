@@ -20,11 +20,15 @@ npm run preview   # preview the production build locally
 ## Project structure
 
 ```
-index.html        entry HTML
-src/main.js        mounts the Svelte app
-src/App.svelte      root component (currently a placeholder calculator form)
+index.html               entry HTML
+src/main.js                mounts the Svelte app
+src/App.svelte               root component — nav + hash-based route switch
+src/lib/router.ts            minimal hash router (no external dependency)
+src/routes/Home.svelte        menu of available calculators
+src/routes/PumbilityCalculator.svelte   pumbility calculator (see docs/pumbility-formula.md)
 ```
 
-## Status
-
-Boilerplate only. The formula in `App.svelte` is a placeholder — actual PIU rating/grade calculations still need to be implemented.
+Routes are added by dropping a component in `src/routes/` and registering it
+in the `routes` map in `App.svelte`. Navigate via `<a href="#/path">` links —
+the URL hash drives the current route, so pages are deep-linkable without any
+server-side routing config.
