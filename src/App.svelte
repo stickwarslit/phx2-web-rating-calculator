@@ -1,11 +1,25 @@
-<script>
-  const grades = [
+<script lang="ts">
+  type ChartType = 'S' | 'D'
+  type Grade = [name: string, multiplier: number]
+  type Plate = [name: string, multiplier: number]
+  type Title = [name: string, pumbility: number]
+
+  /**
+   * Passes needed on a single chart, at a given grade/plate, to reach the
+   * target pumbility — assuming all 50 counted scores are this grade/plate.
+   * Capped at 50 since only the top 50 chart scores count toward pumbility.
+   * '—' means the chart contributes zero pumbility (RG plate, no bonus) and
+   * a raw pass count can't be derived.
+   */
+  type PassesNeeded = number | '—'
+
+  const grades: Grade[] = [
     ['SSS+', 1.50], ['SSS', 1.49], ['SS+', 1.48], ['SS', 1.47],
     ['S+', 1.46], ['S', 1.45], ['AAA+', 1.43], ['AAA', 1.41],
     ['AA+', 1.39], ['AA', 1.37], ['A+', 1.35],
   ]
 
-  const titlesByType = {
+  const titlesByType: Record<ChartType, Title[]> = {
     S: [
       ['Intermediate Lv. 1', 5000], ['Intermediate Lv. 2', 6000], ['Intermediate Lv. 3', 7000],
       ['Intermediate Lv. 4', 8000], ['Intermediate Lv. 5', 9000], ['Intermediate Lv. 6', 10000],
@@ -39,7 +53,7 @@
   }
 
   let levelNumber = 23
-  let chartType = 'D' // S or D, only affects UG plate multiplier
+  let chartType: ChartType = 'D' // only affects UG plate multiplier
   let targetPumbility = 18000
 
   $: titles = titlesByType[chartType]
@@ -53,17 +67,21 @@
     ['TG', 0.004],
     ['FG', 0.002],
     ['RG', 0.000],
-  ]
+  ] satisfies Plate[]
 
   $: levelBase = 130 + 5 * Math.min(levelNumber, 24) + 10 * Math.max(0, levelNumber - 24)
 
   $: matrix = plates.map(([, plateMult]) =>
-    grades.map(([, gradeMult]) => {
+    grades.map(([, gradeMult]): PassesNeeded => {
       const p = levelBase * (gradeMult + plateMult)
       if (p <= 0) return '—'
       return Math.min(Math.ceil(targetPumbility / p), 50)
     })
-  )
+  ) satisfies PassesNeeded[][]
+
+  function handleTitleChange(e: Event) {
+    targetPumbility = +(e.currentTarget as HTMLSelectElement).value
+  }
 </script>
 
 <main>
@@ -96,7 +114,7 @@
       Title
       <select
         value={targetPumbility}
-        on:change={(e) => (targetPumbility = +e.target.value)}
+        on:change={handleTitleChange}
       >
         {#each titles as [name, value]}
           <option value={value}>{name} ({value.toLocaleString()})</option>
