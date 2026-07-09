@@ -10,8 +10,13 @@
     song: string
     grade: string
     plate: string
+    levelBase: number
+    gradeMult: number
+    plateMult: number
     pumbility: number
   }
+
+  let showCalc = false
 
   interface SkippedRow {
     raw: string[]
@@ -130,9 +135,10 @@
       }
 
       const phx2LevelNumber = phx2LevelFor(song, chartType, levelNumber)
+      const levelBase = levelBaseFor(phx2LevelNumber)
       const pumbility = pumbilityFor(phx2LevelNumber, gradeMult, plateMult)
 
-      newRows.push({ difficulty, chartType, levelNumber, phx2LevelNumber, song, grade, plate, pumbility })
+      newRows.push({ difficulty, chartType, levelNumber, phx2LevelNumber, song, grade, plate, levelBase, gradeMult, plateMult, pumbility })
     }
 
     rows = newRows
@@ -165,6 +171,25 @@
   <p class="subtitle">
     This is a calculator for converting your Phoenix 1 scores into a Phoenix 2 Top 50 Pumbility rating. This calculator is built on top of the export from <a href="https://piuscores.arroweclip.se/Account">PIU Scores</a> exported scores csv. To get this file, 1. Make a PIU Scores account 2. Run a score import 3. Go to Account -> Click "DOWNLOAD SCORES". Then, drag the downloaded file below. Note: This calculation is done entirely client side, I will not have access to the file or anything you upload on this site.
   </p>
+
+  <details class="formula">
+    <summary>How pumbility is calculated</summary>
+    <p>
+      <code>levelBase = 130 + 5 * min(level, 24) + 10 * max(0, level - 24)</code><br />
+      <code>pumbility = levelBase * (gradeMultiplier + plateMultiplier)</code>
+    </p>
+    <p>
+      Grade multipliers range from 1.35 (A+) to 1.50 (SSS+); plate bonuses range from 0.000 (RG)
+      to 0.020 (PG). Your top 50 scores (overall, and per Single/Double) are summed for the total
+      pumbility shown below. See the <a href="#/pumbility-calculation">full pumbility calculation reference</a>
+      for complete multiplier tables and worked examples.
+    </p>
+    <p class="disclaimer">
+      Disclaimer: Phoenix 2's pumbility formula is not officially documented and has been
+      reverse-engineered from community findings. It may be incomplete or out of date as more
+      is discovered.
+    </p>
+  </details>
 
   <div
     class="dropzone"
@@ -209,6 +234,11 @@
         {/if}
       </p>
 
+      <label class="calc-toggle">
+        <input type="checkbox" bind:checked={showCalc} />
+        Show calculation
+      </label>
+
       <div class="table-wrap">
         <table>
           <thead>
@@ -219,6 +249,9 @@
               <th>Song</th>
               <th>Grade</th>
               <th>Plate</th>
+              {#if showCalc}
+                <th>Calc</th>
+              {/if}
               <th>Pumbility</th>
             </tr>
           </thead>
@@ -232,6 +265,15 @@
                 <td>{row.song}</td>
                 <td>{row.grade}</td>
                 <td>{row.plate}</td>
+                {#if showCalc}
+                  {@const lvl = row.phx2LevelNumber}
+                  {@const step1 = Math.min(lvl, 24)}
+                  {@const step2 = Math.max(0, lvl - 24)}
+                  <td class="calc">
+                    130 + 5*{step1}{#if step2 > 0} + 10*{step2}{/if} = {row.levelBase}<br />
+                    {row.levelBase} * ({row.gradeMult.toFixed(2)} + {row.plateMult.toFixed(3)})
+                  </td>
+                {/if}
                 <td>{row.pumbility.toFixed(2)}</td>
               </tr>
             {/each}
@@ -264,6 +306,46 @@
   .subtitle {
     color: #555;
     margin-top: -0.5rem;
+  }
+
+  .formula {
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    color: #444;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.5rem 0.9rem;
+  }
+
+  .formula summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .formula code {
+    background: #f0f0f0;
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+  }
+
+  .disclaimer {
+    color: #966400;
+    font-style: italic;
+  }
+
+  .calc-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    margin: 0.5rem 0;
+    cursor: pointer;
+  }
+
+  td.calc {
+    font-family: monospace;
+    font-size: 0.85rem;
+    white-space: nowrap;
   }
 
   .dropzone {

@@ -3,11 +3,13 @@
   import Home from './routes/Home.svelte'
   import PumbilityCalculator from './routes/PumbilityCalculator.svelte'
   import Top50Calculator from './routes/Top50Calculator.svelte'
+  import PumbilityCalculation from './routes/PumbilityCalculation.svelte'
 
-  const routes: Record<string, typeof Home | typeof PumbilityCalculator | typeof Top50Calculator> = {
+  const routes: Record<string, typeof Home | typeof PumbilityCalculator | typeof Top50Calculator | typeof PumbilityCalculation> = {
     '/': Home,
     '/pumbility': PumbilityCalculator,
     '/top50': Top50Calculator,
+    '/pumbility-calculation': PumbilityCalculation,
   }
 
   $: page = routes[$route] ?? Home
@@ -17,6 +19,7 @@
   <a href="#/">Home</a>
   <a href="#/pumbility">Title Calculator</a>
   <a href="#/top50">Top 50</a>
+  <a href="#/pumbility-calculation">Pumbility Docs</a>
 </nav>
 
 <svelte:component this={page} />
