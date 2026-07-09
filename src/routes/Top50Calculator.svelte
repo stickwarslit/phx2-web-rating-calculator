@@ -1,10 +1,12 @@
 <script lang="ts">
   import { gradeMultipliers, platesByName, levelBaseFor, pumbilityFor, titleReached, type ChartType } from '../lib/pumbility'
+  import { phx2LevelFor } from '../lib/rerates'
 
   interface ParsedRow {
     difficulty: string
     chartType: ChartType
     levelNumber: number
+    phx2LevelNumber: number
     song: string
     grade: string
     plate: string
@@ -127,9 +129,10 @@
         continue
       }
 
-      const pumbility = pumbilityFor(levelNumber, gradeMult, plateMult)
+      const phx2LevelNumber = phx2LevelFor(song, chartType, levelNumber)
+      const pumbility = pumbilityFor(phx2LevelNumber, gradeMult, plateMult)
 
-      newRows.push({ difficulty, chartType, levelNumber, song, grade, plate, pumbility })
+      newRows.push({ difficulty, chartType, levelNumber, phx2LevelNumber, song, grade, plate, pumbility })
     }
 
     rows = newRows
@@ -211,7 +214,8 @@
           <thead>
             <tr>
               <th>#</th>
-              <th>Chart</th>
+              <th>Chart (Phx2)</th>
+              <th>Chart (Phx1)</th>
               <th>Song</th>
               <th>Grade</th>
               <th>Plate</th>
@@ -220,9 +224,11 @@
           </thead>
           <tbody>
             {#each board.rows as row, i}
+              {@const rerated = row.phx2LevelNumber !== row.levelNumber}
               <tr>
                 <td>{i + 1}</td>
-                <td>{row.difficulty}</td>
+                <td class:rerated>{row.chartType}{String(row.phx2LevelNumber).padStart(2, '0')}</td>
+                <td class:rerated>{rerated ? row.difficulty : '—'}</td>
                 <td>{row.song}</td>
                 <td>{row.grade}</td>
                 <td>{row.plate}</td>
@@ -341,8 +347,13 @@
     background: #f0f0f0;
   }
 
-  td:nth-child(3) {
+  td:nth-child(4) {
     text-align: left;
+  }
+
+  td.rerated {
+    color: #b00;
+    font-weight: 600;
   }
 
   .skipped {
