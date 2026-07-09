@@ -1,0 +1,358 @@
+<script lang="ts">
+  import { gradeMultipliers, platesByName, levelBaseFor, pumbilityFor, titleReached, type ChartType } from '../lib/pumbility'
+
+  interface ParsedRow {
+    difficulty: string
+    chartType: ChartType
+    levelNumber: number
+    song: string
+    grade: string
+    plate: string
+    pumbility: number
+  }
+
+  interface SkippedRow {
+    raw: string[]
+    reason: string
+  }
+
+  interface Board {
+    name: string
+    chartType?: ChartType
+    rows: ParsedRow[]
+  }
+
+  let fileName = ''
+  let rows: ParsedRow[] = []
+  let skipped: SkippedRow[] = []
+  let dragOver = false
+  let parseError = ''
+  let activeTab = 0
+
+  function top50Of(list: ParsedRow[]): ParsedRow[] {
+    return list.slice().sort((a, b) => b.pumbility - a.pumbility).slice(0, 50)
+  }
+
+  $: boards = [
+    { name: 'Overall Top 50', chartType: undefined, rows: top50Of(rows) },
+    { name: 'Singles Top 50', chartType: 'S', rows: top50Of(rows.filter((r) => r.chartType === 'S')) },
+    { name: 'Doubles Top 50', chartType: 'D', rows: top50Of(rows.filter((r) => r.chartType === 'D')) },
+  ] satisfies Board[]
+
+  function totalOf(board: Board): number {
+    return board.rows.reduce((sum, r) => sum + r.pumbility, 0)
+  }
+
+  function parseCsvLine(line: string): string[] {
+    const result: string[] = []
+    let cur = ''
+    let inQuotes = false
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i]
+      if (inQuotes) {
+        if (ch === '"') {
+          if (line[i + 1] === '"') {
+            cur += '"'
+            i++
+          } else {
+            inQuotes = false
+          }
+        } else {
+          cur += ch
+        }
+      } else if (ch === '"') {
+        inQuotes = true
+      } else if (ch === ',') {
+        result.push(cur)
+        cur = ''
+      } else {
+        cur += ch
+      }
+    }
+    result.push(cur)
+    return result
+  }
+
+  function parseCsv(text: string) {
+    parseError = ''
+    const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0)
+    if (lines.length === 0) {
+      parseError = 'File is empty.'
+      rows = []
+      skipped = []
+      return
+    }
+
+    const header = parseCsvLine(lines[0]).map((h) => h.trim().toLowerCase())
+    const idx = {
+      difficulty: header.indexOf('difficulty'),
+      song: header.indexOf('song'),
+      grade: header.indexOf('lettergrade'),
+      plate: header.indexOf('plate'),
+    }
+    if (idx.difficulty === -1 || idx.song === -1 || idx.grade === -1 || idx.plate === -1) {
+      parseError = 'CSV is missing one of the required columns: Difficulty, Song, LetterGrade, Plate.'
+      rows = []
+      skipped = []
+      return
+    }
+
+    const newRows: ParsedRow[] = []
+    const newSkipped: SkippedRow[] = []
+
+    for (const line of lines.slice(1)) {
+      const cols = parseCsvLine(line)
+      const difficulty = (cols[idx.difficulty] ?? '').trim()
+      const song = (cols[idx.song] ?? '').trim()
+      const grade = (cols[idx.grade] ?? '').trim()
+      const plate = (cols[idx.plate] ?? '').trim()
+
+      const match = /^([SD])(\d+)$/.exec(difficulty)
+      if (!match) {
+        newSkipped.push({ raw: cols, reason: `Unsupported chart type "${difficulty}" (not a Single/Double numbered chart)` })
+        continue
+      }
+      const chartType = match[1] as ChartType
+      const levelNumber = Number(match[2])
+
+      const gradeMult = gradeMultipliers[grade]
+      if (gradeMult === undefined) {
+        newSkipped.push({ raw: cols, reason: `Grade "${grade}" is below A+ and doesn't count toward pumbility` })
+        continue
+      }
+
+      const plateMult = platesByName[plate]?.[chartType]
+      if (plateMult === undefined) {
+        newSkipped.push({ raw: cols, reason: `Unrecognized plate "${plate}"` })
+        continue
+      }
+
+      const pumbility = pumbilityFor(levelNumber, gradeMult, plateMult)
+
+      newRows.push({ difficulty, chartType, levelNumber, song, grade, plate, pumbility })
+    }
+
+    rows = newRows
+    skipped = newSkipped
+  }
+
+  function handleFile(file: File) {
+    fileName = file.name
+    const reader = new FileReader()
+    reader.onload = () => parseCsv(String(reader.result ?? ''))
+    reader.onerror = () => { parseError = 'Failed to read file.' }
+    reader.readAsText(file)
+  }
+
+  function onFileInput(e: Event) {
+    const file = (e.currentTarget as HTMLInputElement).files?.[0]
+    if (file) handleFile(file)
+  }
+
+  function onDrop(e: DragEvent) {
+    e.preventDefault()
+    dragOver = false
+    const file = e.dataTransfer?.files?.[0]
+    if (file) handleFile(file)
+  }
+</script>
+
+<main>
+  <h1>Top 50 Pumbility Calculator</h1>
+  <p class="subtitle">
+    This is a calculator for converting your Phoenix 1 scores into a Phoenix 2 Top 50 Pumbility rating. This calculator is built on top of the export from <a href="https://piuscores.arroweclip.se/Account">PIU Scores</a> exported scores csv. To get this file, 1. Make a PIU Scores account 2. Run a score import 3. Go to Account -> Click "DOWNLOAD SCORES". Then, drag the downloaded file below. Note: This calculation is done entirely client side, I will not have access to the file or anything you upload on this site.
+  </p>
+
+  <div
+    class="dropzone"
+    class:dragover={dragOver}
+    on:dragover|preventDefault={() => (dragOver = true)}
+    on:dragleave={() => (dragOver = false)}
+    on:drop={onDrop}
+  >
+    <p>Drop a CSV file here, or</p>
+    <input type="file" accept=".csv,text/csv" on:change={onFileInput} />
+    {#if fileName}
+      <p class="filename">Loaded: {fileName}</p>
+    {/if}
+  </div>
+
+  {#if parseError}
+    <p class="error">{parseError}</p>
+  {/if}
+
+  {#if rows.length > 0}
+    {@const board = boards[activeTab]}
+    {@const total = totalOf(board)}
+    {@const title = board.chartType ? titleReached(board.chartType, total) : undefined}
+
+    <div class="tabs" role="tablist">
+      {#each boards as b, i}
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === i}
+          class:active={activeTab === i}
+          on:click={() => (activeTab = i)}
+        >{b.name}</button>
+      {/each}
+    </div>
+
+    <section>
+      <p class="total">
+        Total Pumbility (Top {board.rows.length}): <strong>{total.toFixed(2)}</strong>
+        {#if board.chartType}
+          — Title: <strong>{title ? title[0] : 'None'}</strong>
+        {/if}
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Chart</th>
+              <th>Song</th>
+              <th>Grade</th>
+              <th>Plate</th>
+              <th>Pumbility</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each board.rows as row, i}
+              <tr>
+                <td>{i + 1}</td>
+                <td>{row.difficulty}</td>
+                <td>{row.song}</td>
+                <td>{row.grade}</td>
+                <td>{row.plate}</td>
+                <td>{row.pumbility.toFixed(2)}</td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {#if skipped.length > 0}
+      <details class="skipped">
+        <summary>{skipped.length} row(s) skipped (not eligible for pumbility)</summary>
+        <ul>
+          {#each skipped as { raw, reason }}
+            <li>{raw.join(', ')} — {reason}</li>
+          {/each}
+        </ul>
+      </details>
+    {/if}
+  {/if}
+</main>
+
+<style>
+  main {
+    max-width: 900px;
+    margin: 2rem auto;
+    font-family: system-ui, sans-serif;
+    padding: 0 1rem;
+  }
+
+  .subtitle {
+    color: #555;
+    margin-top: -0.5rem;
+  }
+
+  .dropzone {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    margin: 1.5rem 0;
+  }
+
+  .dropzone.dragover {
+    border-color: #888;
+    background: #f7f7f7;
+  }
+
+  .filename {
+    color: #555;
+    font-size: 0.9rem;
+  }
+
+  .error {
+    color: #b00;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 0.25rem;
+    margin-top: 2rem;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .tabs button {
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+    background: none;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.7;
+  }
+
+  .tabs button:hover {
+    opacity: 1;
+  }
+
+  .tabs button.active {
+    opacity: 1;
+    border-color: #ccc;
+    background: rgba(128, 128, 128, 0.1);
+    margin-bottom: -1px;
+    border-bottom: 1px solid transparent;
+  }
+
+  section {
+    margin-top: 1.5rem;
+  }
+
+  .total {
+    font-size: 1.1rem;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  th, td {
+    border: 1px solid #ccc;
+    padding: 0.4rem 0.6rem;
+    text-align: center;
+  }
+
+  thead th {
+    background: #f0f0f0;
+  }
+
+  td:nth-child(3) {
+    text-align: left;
+  }
+
+  .skipped {
+    margin-top: 1.5rem;
+    color: #666;
+    font-size: 0.85rem;
+  }
+
+  .skipped ul {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+</style>
