@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { grades, titlesByType, platesFor, levelBaseFor, pumbilityFor, type ChartType } from '../lib/pumbility'
+  import { titlesByType, platesFor, gradesFor, levelBaseFor, pumbilityFor, type ChartType } from '../lib/pumbility'
 
   /**
    * Passes needed on a single chart, at a given grade/plate, to reach the
@@ -12,12 +12,14 @@
   type PassesNeeded = number | '50+' | '—'
 
   let levelNumber = 23
-  let chartType: ChartType = 'D' // only affects UG plate multiplier
+  let chartType: ChartType = 'D' // affects UG/EG/RG plate and AA/A+/A/B grade multipliers
   let targetPumbility = 18000
 
   $: titles = titlesByType[chartType]
 
   $: plates = platesFor(chartType)
+
+  $: grades = gradesFor(chartType)
 
   $: levelBase = levelBaseFor(levelNumber)
 
@@ -49,8 +51,8 @@
       <code>pumbility = levelBase * (gradeMultiplier + plateMultiplier)</code>
     </p>
     <p>
-      Grade multipliers range from 1.33 (A) to 1.50 (SSS+); plate bonuses range from -0.010 (RG,
-      Single) to 0.020 (PG). See the <a href="#/pumbility-calculation">full pumbility calculation reference</a>
+      Grade multipliers range from 1.25 (B) to 1.50 (SSS+); plate bonuses range from 0 (RG)
+      to 0.020 (PG). See the <a href="#/pumbility-calculation">full pumbility calculation reference</a>
       for complete multiplier tables and worked examples.
     </p>
     <p class="disclaimer">

@@ -3,16 +3,34 @@
 
 export type ChartType = 'S' | 'D'
 export type Grade = [name: string, multiplier: number]
-export type Plate = [name: string, multiplier: number]
 export type Title = [name: string, pumbility: number]
 
-export const grades: Grade[] = [
-  ['SSS+', 1.50], ['SSS', 1.49], ['SS+', 1.48], ['SS', 1.47],
-  ['S+', 1.46], ['S', 1.45], ['AAA+', 1.43], ['AAA', 1.41],
-  ['AA+', 1.39], ['AA', 1.37], ['A+', 1.35], ['A', 1.33],
-]
+/**
+ * Grade multipliers, keyed by grade name. AA, A+, A, and B differ between
+ * Single and Double. A+ (Single) and B (both) are guesses, not yet confirmed.
+ */
+export const gradesByName: Record<string, Record<ChartType, number>> = {
+  'SSS+': { S: 1.50, D: 1.50 },
+  'SSS': { S: 1.49, D: 1.49 },
+  'SS+': { S: 1.48, D: 1.48 },
+  'SS': { S: 1.47, D: 1.47 },
+  'S+': { S: 1.46, D: 1.46 },
+  'S': { S: 1.45, D: 1.45 },
+  'AAA+': { S: 1.43, D: 1.43 },
+  'AAA': { S: 1.41, D: 1.41 },
+  'AA+': { S: 1.39, D: 1.39 },
+  'AA': { S: 1.36, D: 1.37 },
+  'A+': { S: 1.33, D: 1.35 },
+  'A': { S: 1.28, D: 1.30 },
+  'B': { S: 1.25, D: 1.25 },
+}
 
-export const gradeMultipliers: Record<string, number> = Object.fromEntries(grades)
+/** Grade names in display order (highest to lowest). */
+export const gradeNames: string[] = Object.keys(gradesByName)
+
+export function gradesFor(chartType: ChartType): Grade[] {
+  return gradeNames.map((name) => [name, gradesByName[name][chartType]])
+}
 
 /** Phoenix 1 letter grade boundaries by score (out of 1,000,000), ascending. Kept for reference. */
 export const phx1GradeBoundaries: [minScore: number, name: string][] = [
@@ -67,7 +85,7 @@ export function phx2GradeForScore(score: number, fallbackGrade: string): string 
   return fallbackGrade
 }
 
-/** Plate multipliers, keyed by in-game plate name. UG, EG, and RG differ between Single and Double. */
+/** Plate multipliers, keyed by in-game plate name. UG and EG differ between Single and Double. */
 export const platesByName: Record<string, Record<ChartType, number>> = {
   'Perfect Game': { S: 0.020, D: 0.020 },
   'Ultimate Game': { S: 0.017, D: 0.016 },
@@ -76,7 +94,7 @@ export const platesByName: Record<string, Record<ChartType, number>> = {
   'Marvelous Game': { S: 0.006, D: 0.006 },
   'Talented Game': { S: 0.004, D: 0.004 },
   'Fair Game': { S: 0.002, D: 0.002 },
-  'Rough Game': { S: -0.010, D: 0.000 },
+  'Rough Game': { S: 0.000, D: 0.000 },
 }
 
 /** Short plate codes (PG/UG/EG/...) paired with in-game plate names, in display order. */

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { grades, plateCodesByName, platesByName, levelBaseFor, phx1GradeBoundaries, phx2GradeBoundaries, type ChartType } from '../lib/pumbility'
+  import { gradeNames, gradesByName, plateCodesByName, platesByName, levelBaseFor, phx1GradeBoundaries, phx2GradeBoundaries, type ChartType } from '../lib/pumbility'
 
   const levelRows = [1, 5, 10, 15, 20, 23, 24, 25, 26, 28].map((level) => ({
     level,
@@ -8,6 +8,12 @@
 
   const gradeBoundaryRows = phx2GradeBoundaries.slice().reverse()
   const phx1GradeBoundaryRows = phx1GradeBoundaries.slice().reverse()
+
+  const gradeRows = gradeNames.map((name) => ({
+    name,
+    s: gradesByName[name].S,
+    d: gradesByName[name].D,
+  }))
 
   const plateRows = plateCodesByName.map(([code, name]) => ({
     code,
@@ -65,15 +71,18 @@
 
   <section>
     <h2>Grade Multipliers</h2>
-    <p>Note: The multiplier for A is a guess and not currently confirmed.</p>
+    <p>
+      AA, A+, A, and B differ between Single and Double. A+ (Single) and B (both) are guesses
+      and not currently confirmed.
+    </p>
     <div class="table-wrap">
       <table>
         <thead>
-          <tr><th>Grade</th><th>Multiplier</th></tr>
+          <tr><th>Grade</th><th>Single</th><th>Double</th></tr>
         </thead>
         <tbody>
-          {#each grades as [name, mult]}
-            <tr><td>{name}</td><td>{mult.toFixed(2)}</td></tr>
+          {#each gradeRows as { name, s, d }}
+            <tr><td>{name}</td><td>{s.toFixed(2)}</td><td>{d.toFixed(2)}</td></tr>
           {/each}
         </tbody>
       </table>

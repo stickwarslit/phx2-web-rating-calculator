@@ -5,8 +5,8 @@
     <code>pumbility = levelBase * (gradeMultiplier + plateMultiplier)</code>
   </p>
   <p>
-    Grade multipliers range from 1.33 (A) to 1.50 (SSS+); plate bonuses range from -0.010 (RG,
-    Single) to 0.020 (PG). <slot />See the <a href="#/pumbility-calculation">full pumbility calculation reference</a>
+    Grade multipliers range from 1.25 (B) to 1.50 (SSS+); plate bonuses range from 0 (RG)
+    to 0.020 (PG). <slot />See the <a href="#/pumbility-calculation">full pumbility calculation reference</a>
     for complete multiplier tables and worked examples.
   </p>
   <p class="disclaimer">

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { gradeMultipliers, platesByName, levelBaseFor, pumbilityFor, titleReached, phx2GradeForScore, type ChartType } from '../lib/pumbility'
+  import { gradesByName, platesByName, levelBaseFor, pumbilityFor, titleReached, phx2GradeForScore, type ChartType } from '../lib/pumbility'
   import { phx2LevelFor } from '../lib/rerates'
   import PumbilityFormula from '../lib/PumbilityFormula.svelte'
 
@@ -142,7 +142,7 @@
       const score = Number(scoreRaw.replace(/[",]/g, ''))
       const grade = Number.isFinite(score) ? phx2GradeForScore(score, phx1Grade) : phx1Grade
 
-      const gradeMult = gradeMultipliers[grade]
+      const gradeMult = gradesByName[grade]?.[chartType]
       if (gradeMult === undefined) {
         newSkipped.push({ raw: cols, reason: `Grade "${grade}" is below A and doesn't count toward pumbility` })
         continue

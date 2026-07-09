@@ -43,28 +43,30 @@ against Phoenix 1 boundaries, and shows a Grade Change column where the two
 diverge.
 
 ## Grade Multipliers
-Note: The multiplier for A is a guess and not currently confirmed.
 
-| Grade | Multiplier |
-|-------|-----------|
-| SSS+  | 1.50 |
-| SSS   | 1.49 |
-| SS+   | 1.48 |
-| SS    | 1.47 |
-| S+    | 1.46 |
-| S     | 1.45 |
-| AAA+  | 1.43 |
-| AAA   | 1.41 |
-| AA+   | 1.39 |
-| AA    | 1.37 |
-| A+    | 1.35 |
-| A     | 1.33 |
+AA, A+, A, and B differ between Single and Double. A+ (Single) and B (both)
+are guesses and not currently confirmed.
+
+| Grade | Single | Double |
+|-------|--------|--------|
+| SSS+  | 1.50 | 1.50 |
+| SSS   | 1.49 | 1.49 |
+| SS+   | 1.48 | 1.48 |
+| SS    | 1.47 | 1.47 |
+| S+    | 1.46 | 1.46 |
+| S     | 1.45 | 1.45 |
+| AAA+  | 1.43 | 1.43 |
+| AAA   | 1.41 | 1.41 |
+| AA+   | 1.39 | 1.39 |
+| AA    | 1.36 | 1.37 |
+| A+    | 1.33 | 1.35 |
+| A     | 1.28 | 1.30 |
+| B     | 1.25 | 1.25 |
 
 ## Plate Bonus Multipliers
 
 Applied as a bonus added on top of the grade-multiplied base (see formula
-below). UG, EG, and RG have separate values for Single (S) vs Double (D)
-charts.
+below). UG and EG have separate values for Single (S) vs Double (D) charts.
 
 | Plate | Multiplier |
 |-------|-----------|
@@ -77,7 +79,7 @@ charts.
 | MG    | 0.006 |
 | TG    | 0.004 |
 | FG    | 0.002 |
-| RG (S)| -0.010 |
+| RG (S)| 0.000 |
 | RG (D)| 0.000 |
 
 ## Pumbility Formula

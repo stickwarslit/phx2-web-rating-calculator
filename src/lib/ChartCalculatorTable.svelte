@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { grades, platesFor, levelBaseFor, pumbilityFor, type ChartType } from './pumbility'
+  import { gradesFor, platesFor, levelBaseFor, pumbilityFor, type ChartType } from './pumbility'
 
   let chartType: ChartType = 'S'
   let levelNumber = 1
@@ -10,6 +10,8 @@
   $: levels = Array.from({ length: maxLevel }, (_, i) => i + 1)
 
   $: plates = platesFor(chartType)
+
+  $: grades = gradesFor(chartType)
 
   $: levelBase = levelBaseFor(levelNumber)
 
