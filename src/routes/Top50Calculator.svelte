@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { gradeMultipliers, platesByName, levelBaseFor, pumbilityFor, titleReached, type ChartType } from '../lib/pumbility'
+  import { gradeMultipliers, platesByName, levelBaseFor, pumbilityFor, titleReached, phx2GradeForScore, type ChartType } from '../lib/pumbility'
   import { phx2LevelFor } from '../lib/rerates'
 
   interface ParsedRow {
@@ -8,6 +8,8 @@
     levelNumber: number
     phx2LevelNumber: number
     song: string
+    score: number
+    phx1Grade: string
     grade: string
     plate: string
     levelBase: number
@@ -17,6 +19,11 @@
   }
 
   let showCalc = false
+  let openNoteKey: string | null = null
+
+  function toggleNote(key: string) {
+    openNoteKey = openNoteKey === key ? null : key
+  }
 
   interface SkippedRow {
     raw: string[]
@@ -95,10 +102,11 @@
       difficulty: header.indexOf('difficulty'),
       song: header.indexOf('song'),
       grade: header.indexOf('lettergrade'),
+      score: header.indexOf('score'),
       plate: header.indexOf('plate'),
     }
-    if (idx.difficulty === -1 || idx.song === -1 || idx.grade === -1 || idx.plate === -1) {
-      parseError = 'CSV is missing one of the required columns: Difficulty, Song, LetterGrade, Plate.'
+    if (idx.difficulty === -1 || idx.song === -1 || idx.grade === -1 || idx.score === -1 || idx.plate === -1) {
+      parseError = 'CSV is missing one of the required columns: Difficulty, Song, LetterGrade, Score, Plate.'
       rows = []
       skipped = []
       return
@@ -111,7 +119,8 @@
       const cols = parseCsvLine(line)
       const difficulty = (cols[idx.difficulty] ?? '').trim()
       const song = (cols[idx.song] ?? '').trim()
-      const grade = (cols[idx.grade] ?? '').trim()
+      const phx1Grade = (cols[idx.grade] ?? '').trim()
+      const scoreRaw = (cols[idx.score] ?? '').trim()
       const plate = (cols[idx.plate] ?? '').trim()
 
       const match = /^([SD])(\d+)$/.exec(difficulty)
@@ -121,6 +130,9 @@
       }
       const chartType = match[1] as ChartType
       const levelNumber = Number(match[2])
+
+      const score = Number(scoreRaw.replace(/[",]/g, ''))
+      const grade = Number.isFinite(score) ? phx2GradeForScore(score, phx1Grade) : phx1Grade
 
       const gradeMult = gradeMultipliers[grade]
       if (gradeMult === undefined) {
@@ -138,7 +150,7 @@
       const levelBase = levelBaseFor(phx2LevelNumber)
       const pumbility = pumbilityFor(phx2LevelNumber, gradeMult, plateMult)
 
-      newRows.push({ difficulty, chartType, levelNumber, phx2LevelNumber, song, grade, plate, levelBase, gradeMult, plateMult, pumbility })
+      newRows.push({ difficulty, chartType, levelNumber, phx2LevelNumber, song, score, phx1Grade, grade, plate, levelBase, gradeMult, plateMult, pumbility })
     }
 
     rows = newRows
@@ -165,6 +177,8 @@
     if (file) handleFile(file)
   }
 </script>
+
+<svelte:window on:click={() => (openNoteKey = null)} />
 
 <main>
   <h1>Top 50 Pumbility Calculator</h1>
@@ -244,9 +258,9 @@
           <thead>
             <tr>
               <th>#</th>
-              <th>Chart (Phx2)</th>
-              <th>Chart (Phx1)</th>
+              <th>Chart</th>
               <th>Song</th>
+              <th>Score</th>
               <th>Grade</th>
               <th>Plate</th>
               {#if showCalc}
@@ -258,12 +272,59 @@
           <tbody>
             {#each board.rows as row, i}
               {@const rerated = row.phx2LevelNumber !== row.levelNumber}
+              {@const gradeChanged = row.grade !== row.phx1Grade}
               <tr>
                 <td data-label="#">{i + 1}</td>
-                <td data-label="Chart (Phx2)" class:rerated>{row.chartType}{String(row.phx2LevelNumber).padStart(2, '0')}</td>
-                <td data-label="Chart (Phx1)" class:rerated>{rerated ? row.difficulty : '—'}</td>
+                <td data-label="Chart" class:rerated>
+                  <span class="cell-content">
+                    {row.chartType}{String(row.phx2LevelNumber).padStart(2, '0')}
+                    {#if rerated}
+                      {@const key = `chart-${i}`}
+                      <span class="change-note">
+                        <button
+                          type="button"
+                          class="change-icon"
+                          aria-label="Show Phoenix 1 chart"
+                          on:click|stopPropagation={() => toggleNote(key)}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path fill="currentColor" d="M12.713 16.713Q13 16.425 13 16v-4q0-.425-.288-.712T12 11t-.712.288T11 12v4q0 .425.288.713T12 17t.713-.288m0-8Q13 8.425 13 8t-.288-.712T12 7t-.712.288T11 8t.288.713T12 9t.713-.288M12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22m0-2q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8" />
+                          </svg>
+                        </button>
+                        {#if openNoteKey === key}
+                          <span class="change-note-popup">Phoenix 1: {row.difficulty}</span>
+                        {/if}
+                      </span>
+                    {/if}
+                  </span>
+                </td>
                 <td data-label="Song">{row.song}</td>
-                <td data-label="Grade">{row.grade}</td>
+                <td data-label="Score">{row.score.toLocaleString()}</td>
+                <td data-label="Grade" class:rerated={gradeChanged}>
+                  <span class="cell-content">
+                    {row.grade}
+                    {#if gradeChanged}
+                      {@const key = `grade-${i}`}
+                      <span class="change-note">
+                        <button
+                          type="button"
+                          class="change-icon"
+                          aria-label="Show Phoenix 1 grade"
+                          on:click|stopPropagation={() => toggleNote(key)}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path fill="currentColor" d="M12.713 16.713Q13 16.425 13 16v-4q0-.425-.288-.712T12 11t-.712.288T11 12v4q0 .425.288.713T12 17t.713-.288m0-8Q13 8.425 13 8t-.288-.712T12 7t-.712.288T11 8t.288.713T12 9t.713-.288M12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22m0-2q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8" />
+                          </svg>
+                        </button>
+                        {#if openNoteKey === key}
+                          <span class="change-note-popup">Phoenix 1: {row.phx1Grade}</span>
+                        {/if}
+                      </span>
+                    {/if}
+                  </span>
+                </td>
                 <td data-label="Plate">{row.plate}</td>
                 {#if showCalc}
                   {@const lvl = row.phx2LevelNumber}
@@ -429,13 +490,53 @@
     background: #f0f0f0;
   }
 
-  td:nth-child(4) {
+  td:nth-child(3) {
     text-align: left;
   }
 
   td.rerated {
     color: #b00;
     font-weight: 600;
+  }
+
+  .cell-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
+
+  .change-note {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    margin-left: 0.15rem;
+  }
+
+  .change-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #b00;
+    vertical-align: middle;
+  }
+
+  .change-note-popup {
+    position: absolute;
+    top: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    font-weight: normal;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    z-index: 10;
   }
 
   @media (max-width: 640px) {
@@ -482,7 +583,7 @@
       border-bottom: none;
     }
 
-    td:nth-child(4) {
+    td:nth-child(3) {
       text-align: right;
     }
 
@@ -503,6 +604,14 @@
 
     td.calc::before {
       margin-right: 0;
+    }
+
+    .change-note-popup {
+      left: auto;
+      right: 0;
+      transform: none;
+      white-space: normal;
+      max-width: min(70vw, 240px);
     }
   }
 

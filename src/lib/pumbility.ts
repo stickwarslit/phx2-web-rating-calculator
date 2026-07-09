@@ -14,6 +14,58 @@ export const grades: Grade[] = [
 
 export const gradeMultipliers: Record<string, number> = Object.fromEntries(grades)
 
+/** Phoenix 1 letter grade boundaries by score (out of 1,000,000), ascending. Kept for reference. */
+export const phx1GradeBoundaries: [minScore: number, name: string][] = [
+  [995000, 'SSS+'],
+  [990000, 'SSS'],
+  [985000, 'SS+'],
+  [980000, 'SS'],
+  [975000, 'S+'],
+  [970000, 'S'],
+  [960000, 'AAA+'],
+  [950000, 'AAA'],
+  [925000, 'AA+'],
+  [900000, 'AA'],
+  [825000, 'A+'],
+  [750000, 'A'],
+  [650000, 'B'],
+  [550000, 'C'],
+  [450000, 'D'],
+  [0, 'F'],
+]
+
+/**
+ * Phoenix 2 letter grade boundaries by score (out of 1,000,000), ascending.
+ * The 900k-950k range was redrawn in Phoenix 2 (A+/AA/AA+ tiers now span
+ * 900-920/920-940/940-950k instead of Phoenix 1's single 900k AA cutoff);
+ * everything from AAA (950k) up is unchanged from Phoenix 1.
+ */
+export const phx2GradeBoundaries: [minScore: number, name: string][] = [
+  [995000, 'SSS+'],
+  [990000, 'SSS'],
+  [985000, 'SS+'],
+  [980000, 'SS'],
+  [975000, 'S+'],
+  [970000, 'S'],
+  [960000, 'AAA+'],
+  [950000, 'AAA'],
+  [940000, 'AA+'],
+  [920000, 'AA'],
+  [900000, 'A+'],
+]
+
+/**
+ * Recomputes the Phoenix 2 letter grade from a raw score. Scores below the
+ * lowest Phoenix 2 boundary (900k, below which grades are unchanged from
+ * Phoenix 1) fall back to the grade already recorded for the score.
+ */
+export function phx2GradeForScore(score: number, fallbackGrade: string): string {
+  for (const [minScore, name] of phx2GradeBoundaries) {
+    if (score >= minScore) return name
+  }
+  return fallbackGrade
+}
+
 /** Plate multipliers, keyed by in-game plate name. UG differs between Single and Double. */
 export const platesByName: Record<string, Record<ChartType, number>> = {
   'Perfect Game': { S: 0.020, D: 0.020 },

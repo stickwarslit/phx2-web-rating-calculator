@@ -1,10 +1,13 @@
 <script lang="ts">
-  import { grades, plateCodesByName, platesByName, levelBaseFor, type ChartType } from '../lib/pumbility'
+  import { grades, plateCodesByName, platesByName, levelBaseFor, phx1GradeBoundaries, phx2GradeBoundaries, type ChartType } from '../lib/pumbility'
 
   const levelRows = [1, 5, 10, 15, 20, 23, 24, 25, 26, 28].map((level) => ({
     level,
     base: levelBaseFor(level),
   }))
+
+  const gradeBoundaryRows = phx2GradeBoundaries.slice().reverse()
+  const phx1GradeBoundaryRows = phx1GradeBoundaries.slice().reverse()
 
   const plateRows = plateCodesByName.map(([code, name]) => ({
     code,
@@ -74,6 +77,44 @@
           {/each}
         </tbody>
       </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Letter Grade Boundaries</h2>
+    <p>
+      Phoenix 2 redrew the 900k-950k grade boundaries: A+/AA/AA+ now span 900-920/920-940/940-950k
+      instead of Phoenix 1's single 900k AA cutoff. Everything from AAA (950k) up is unchanged
+      from Phoenix 1.
+    </p>
+    <div class="table-columns">
+      <div class="table-wrap">
+        <h3>Phoenix 2</h3>
+        <table>
+          <thead>
+            <tr><th>Score</th><th>Grade</th></tr>
+          </thead>
+          <tbody>
+            {#each gradeBoundaryRows as [minScore, name]}
+              <tr><td>{minScore.toLocaleString()}</td><td>{name}</td></tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-wrap">
+        <h3>Phoenix 1 (for reference)</h3>
+        <table>
+          <thead>
+            <tr><th>Score</th><th>Grade</th></tr>
+          </thead>
+          <tbody>
+            {#each phx1GradeBoundaryRows as [minScore, name]}
+              <tr><td>{minScore === 0 ? 'Below 450,000' : minScore.toLocaleString()}</td><td>{name}</td></tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
     </div>
   </section>
 
@@ -189,6 +230,22 @@ passes     = CEILING(15000 / 310.5) = 49  -&gt; capped at 50 (all D20 charts)</c
 
   .table-wrap {
     overflow-x: auto;
+  }
+
+  .table-columns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .table-columns .table-wrap {
+    flex: 1 1 220px;
+    margin-top: 0;
+  }
+
+  .table-columns h3 {
+    margin-bottom: 0.25rem;
   }
 
   table {

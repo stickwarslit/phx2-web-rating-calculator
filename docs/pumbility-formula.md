@@ -15,6 +15,31 @@ levelBase = 130 + 5 * MIN(levelNumber, 24) + 10 * MAX(0, levelNumber - 24)
 - `levelNumber` is the chart's numeric level (the number after the S/D
   prefix), regardless of Single/Double.
 
+## Letter Grade Boundaries (score-based)
+
+Phoenix 2 redrew the 900k-950k grade boundaries. Everything from AAA (950k)
+up is unchanged from Phoenix 1.
+
+| Score      | Phoenix 1 | Phoenix 2 |
+|------------|-----------|-----------|
+| 900,000    | AA        | A+        |
+| 920,000    | AA+       | AA        |
+| 940,000    | AA+       | AA+       |
+| 950,000    | AAA       | AAA       |
+| 960,000    | AAA+      | AAA+      |
+| 970,000    | S         | S         |
+| 975,000    | S+        | S+        |
+| 980,000    | SS        | SS        |
+| 985,000    | SS+       | SS+       |
+| 990,000    | SSS       | SSS       |
+| 995,000    | SSS+      | SSS+      |
+
+`phx2GradeForScore` in [src/lib/pumbility.ts](../src/lib/pumbility.ts) computes
+the Phoenix 2 grade from a raw score. The Top 50 calculator uses this to
+recompute each score's grade rather than trusting the letter grade recorded
+against Phoenix 1 boundaries, and shows a Grade Change column where the two
+diverge.
+
 ## Grade Multipliers
 
 | Grade | Multiplier |
