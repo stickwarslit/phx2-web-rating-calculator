@@ -5,14 +5,44 @@
     ['AA+', 1.39], ['AA', 1.37], ['A+', 1.35],
   ]
 
-  const titles = [
-    ['Advanced Lv. 1', 15000],
-    ['Expert Lv. 1', 18000],
-  ]
+  const titlesByType = {
+    S: [
+      ['Intermediate Lv. 1', 5000], ['Intermediate Lv. 2', 6000], ['Intermediate Lv. 3', 7000],
+      ['Intermediate Lv. 4', 8000], ['Intermediate Lv. 5', 9000], ['Intermediate Lv. 6', 10000],
+      ['Intermediate Lv. 7', 11000], ['Intermediate Lv. 8', 12000], ['Intermediate Lv. 9', 13000],
+      ['Intermediate Lv. 10', 14000],
+      ['Advanced Lv. 1', 15000], ['Advanced Lv. 2', 15250], ['Advanced Lv. 3', 15500],
+      ['Advanced Lv. 4', 15750], ['Advanced Lv. 5', 16000], ['Advanced Lv. 6', 16250],
+      ['Advanced Lv. 7', 16500], ['Advanced Lv. 8', 16750], ['Advanced Lv. 9', 17000],
+      ['Advanced Lv. 10', 17250],
+      ['Expert Lv. 1', 17500], ['Expert Lv. 2', 17700], ['Expert Lv. 3', 17900],
+      ['Expert Lv. 4', 18100], ['Expert Lv. 5', 18300], ['Expert Lv. 6', 18500],
+      ['Expert Lv. 7', 18600], ['Expert Lv. 8', 18700], ['Expert Lv. 9', 18800],
+      ['Expert Lv. 10', 18900],
+      ['Master', 19000],
+    ],
+    D: [
+      ['Intermediate Lv. 1', 5000], ['Intermediate Lv. 2', 6000], ['Intermediate Lv. 3', 7000],
+      ['Intermediate Lv. 4', 8000], ['Intermediate Lv. 5', 9000], ['Intermediate Lv. 6', 10000],
+      ['Intermediate Lv. 7', 11000], ['Intermediate Lv. 8', 12000], ['Intermediate Lv. 9', 13000],
+      ['Intermediate Lv. 10', 14000],
+      ['Advanced Lv. 1', 15000], ['Advanced Lv. 2', 15300], ['Advanced Lv. 3', 15600],
+      ['Advanced Lv. 4', 15900], ['Advanced Lv. 5', 16200], ['Advanced Lv. 6', 16500],
+      ['Advanced Lv. 7', 16800], ['Advanced Lv. 8', 17100], ['Advanced Lv. 9', 17400],
+      ['Advanced Lv. 10', 17700],
+      ['Expert Lv. 1', 18000], ['Expert Lv. 2', 18200], ['Expert Lv. 3', 18400],
+      ['Expert Lv. 4', 18600], ['Expert Lv. 5', 18800], ['Expert Lv. 6', 19000],
+      ['Expert Lv. 7', 19100], ['Expert Lv. 8', 19200], ['Expert Lv. 9', 19300],
+      ['Expert Lv. 10', 19400],
+      ['Master', 19500],
+    ],
+  }
 
   let levelNumber = 23
   let chartType = 'D' // S or D, only affects UG plate multiplier
   let targetPumbility = 18000
+
+  $: titles = titlesByType[chartType]
 
   $: plates = [
     ['PG', 0.020],
@@ -62,17 +92,17 @@
       <input type="number" min="0" step="1" bind:value={targetPumbility} />
     </label>
 
-    <div class="title-shortcuts">
-      {#each titles as [name, value]}
-        <button
-          type="button"
-          class:active={targetPumbility === value}
-          on:click={() => (targetPumbility = value)}
-        >
-          {name} ({value.toLocaleString()})
-        </button>
-      {/each}
-    </div>
+    <label>
+      Title
+      <select
+        value={targetPumbility}
+        on:change={(e) => (targetPumbility = +e.target.value)}
+      >
+        {#each titles as [name, value]}
+          <option value={value}>{name} ({value.toLocaleString()})</option>
+        {/each}
+      </select>
+    </label>
   </form>
 
   <p class="level-base">Level Base: <strong>{levelBase}</strong></p>
@@ -138,27 +168,6 @@
   input, select {
     padding: 0.5rem;
     font-size: 1rem;
-  }
-
-  .title-shortcuts {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .title-shortcuts button {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.85rem;
-    cursor: pointer;
-    border: 1px solid #999;
-    background: #fff;
-    border-radius: 4px;
-  }
-
-  .title-shortcuts button.active {
-    background: #333;
-    color: #fff;
-    border-color: #333;
   }
 
   .level-base {
