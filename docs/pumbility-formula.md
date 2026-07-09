@@ -43,6 +43,7 @@ against Phoenix 1 boundaries, and shows a Grade Change column where the two
 diverge.
 
 ## Grade Multipliers
+Note: The multiplier for A is a guess and not currently confirmed.
 
 | Grade | Multiplier |
 |-------|-----------|
