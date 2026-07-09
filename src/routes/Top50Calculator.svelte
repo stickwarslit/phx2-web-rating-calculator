@@ -104,6 +104,7 @@
       grade: header.indexOf('lettergrade'),
       score: header.indexOf('score'),
       plate: header.indexOf('plate'),
+      isBroken: header.indexOf('isbroken'),
     }
     if (idx.difficulty === -1 || idx.song === -1 || idx.grade === -1 || idx.score === -1 || idx.plate === -1) {
       parseError = 'CSV is missing one of the required columns: Difficulty, Song, LetterGrade, Score, Plate.'
@@ -122,6 +123,12 @@
       const phx1Grade = (cols[idx.grade] ?? '').trim()
       const scoreRaw = (cols[idx.score] ?? '').trim()
       const plate = (cols[idx.plate] ?? '').trim()
+      const isBroken = idx.isBroken !== -1 && (cols[idx.isBroken] ?? '').trim().toLowerCase() === 'true'
+
+      if (isBroken) {
+        newSkipped.push({ raw: cols, reason: 'Broken run (IsBroken) doesn\'t count toward pumbility' })
+        continue
+      }
 
       const match = /^([SD])(\d+)$/.exec(difficulty)
       if (!match) {
