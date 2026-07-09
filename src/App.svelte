@@ -8,10 +8,11 @@
    * Passes needed on a single chart, at a given grade/plate, to reach the
    * target pumbility — assuming all 50 counted scores are this grade/plate.
    * Capped at 50 since only the top 50 chart scores count toward pumbility.
+   * '50+' means the raw count exceeds 50 — unreachable via this chart alone.
    * '—' means the chart contributes zero pumbility (RG plate, no bonus) and
    * a raw pass count can't be derived.
    */
-  type PassesNeeded = number | '—'
+  type PassesNeeded = number | '50+' | '—'
 
   const grades: Grade[] = [
     ['SSS+', 1.50], ['SSS', 1.49], ['SS+', 1.48], ['SS', 1.47],
@@ -75,7 +76,8 @@
     grades.map(([, gradeMult]): PassesNeeded => {
       const p = levelBase * (gradeMult + plateMult)
       if (p <= 0) return '—'
-      return Math.min(Math.ceil(targetPumbility / p), 50)
+      const raw = Math.ceil(targetPumbility / p)
+      return raw > 50 ? '50+' : raw
     })
   ) satisfies PassesNeeded[][]
 
@@ -140,7 +142,10 @@
           <tr>
             <th>{plateName}</th>
             {#each grades as [gradeName], gradeIndex}
-              <td>{matrix[plateIndex][gradeIndex]}</td>
+              <td
+                class:unreachable={matrix[plateIndex][gradeIndex] === '50+'}
+                class:zero={matrix[plateIndex][gradeIndex] === '—'}
+              >{matrix[plateIndex][gradeIndex]}</td>
             {/each}
           </tr>
         {/each}
@@ -150,8 +155,9 @@
 
   <p class="note">
     Note: Pumbility counts your top 50 chart scores. Values above show
-    passes needed if this chart is your only source at a given plate/grade,
-    capped at 50.
+    passes needed if this chart is your only source at a given plate/grade.
+    "50+" means the target isn't reachable from this chart alone, even at 50
+    passes.
   </p>
 </main>
 
@@ -215,6 +221,15 @@
   tbody th {
     background: #f7f7f7;
     text-align: left;
+  }
+
+  td.unreachable {
+    color: #b00;
+    background: #fdf1f1;
+  }
+
+  td.zero {
+    color: #aaa;
   }
 
   .note {
