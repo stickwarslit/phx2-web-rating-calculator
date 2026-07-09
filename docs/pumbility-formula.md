@@ -63,19 +63,22 @@ Note: The multiplier for A is a guess and not currently confirmed.
 ## Plate Bonus Multipliers
 
 Applied as a bonus added on top of the grade-multiplied base (see formula
-below). UG has separate values for Single (S) vs Double (D) charts.
+below). UG, EG, and RG have separate values for Single (S) vs Double (D)
+charts.
 
 | Plate | Multiplier |
 |-------|-----------|
 | PG    | 0.020 |
 | UG (S)| 0.017 |
 | UG (D)| 0.016 |
-| EG    | 0.014 |
+| EG (S)| 0.014 |
+| EG (D)| 0.012 |
 | SG    | 0.008 |
 | MG    | 0.006 |
 | TG    | 0.004 |
 | FG    | 0.002 |
-| RG    | 0.000 |
+| RG (S)| -0.010 |
+| RG (D)| 0.000 |
 
 ## Pumbility Formula
 

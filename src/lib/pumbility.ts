@@ -67,16 +67,16 @@ export function phx2GradeForScore(score: number, fallbackGrade: string): string 
   return fallbackGrade
 }
 
-/** Plate multipliers, keyed by in-game plate name. UG differs between Single and Double. */
+/** Plate multipliers, keyed by in-game plate name. UG, EG, and RG differ between Single and Double. */
 export const platesByName: Record<string, Record<ChartType, number>> = {
   'Perfect Game': { S: 0.020, D: 0.020 },
   'Ultimate Game': { S: 0.017, D: 0.016 },
-  'Extreme Game': { S: 0.014, D: 0.014 },
+  'Extreme Game': { S: 0.014, D: 0.012 },
   'Superb Game': { S: 0.008, D: 0.008 },
   'Marvelous Game': { S: 0.006, D: 0.006 },
   'Talented Game': { S: 0.004, D: 0.004 },
   'Fair Game': { S: 0.002, D: 0.002 },
-  'Rough Game': { S: 0.000, D: 0.000 },
+  'Rough Game': { S: -0.010, D: 0.000 },
 }
 
 /** Short plate codes (PG/UG/EG/...) paired with in-game plate names, in display order. */
