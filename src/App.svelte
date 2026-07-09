@@ -15,7 +15,7 @@
 
 <nav>
   <a href="#/">Home</a>
-  <a href="#/pumbility">Pumbility</a>
+  <a href="#/pumbility">Title Calculator</a>
   <a href="#/top50">Top 50</a>
 </nav>
 

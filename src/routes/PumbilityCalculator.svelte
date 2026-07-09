@@ -36,7 +36,7 @@
 </script>
 
 <main>
-  <h1>PIU Pumbility Calculator</h1>
+  <h1>PIU Title Calculator</h1>
   <p class="subtitle">
     Passes needed on a single chart to reach a target pumbility, assuming
     all 50 counted scores are the same grade/plate.
