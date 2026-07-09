@@ -52,11 +52,12 @@ export const phx2GradeBoundaries: [minScore: number, name: string][] = [
   [940000, 'AA+'],
   [920000, 'AA'],
   [900000, 'A+'],
+  [750000, 'A'],
 ]
 
 /**
  * Recomputes the Phoenix 2 letter grade from a raw score. Scores below the
- * lowest Phoenix 2 boundary (900k, below which grades are unchanged from
+ * lowest Phoenix 2 boundary (750k, below which grades are unchanged from
  * Phoenix 1) fall back to the grade already recorded for the score.
  */
 export function phx2GradeForScore(score: number, fallbackGrade: string): string {

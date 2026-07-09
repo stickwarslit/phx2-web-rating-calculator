@@ -85,7 +85,8 @@
     <p>
       Phoenix 2 redrew the 900k-950k grade boundaries: A+/AA/AA+ now span 900-920/920-940/940-950k
       instead of Phoenix 1's single 900k AA cutoff. Everything from AAA (950k) up is unchanged
-      from Phoenix 1.
+      from Phoenix 1. Below 900k, scores are graded A (not A+) down to 750k, matching Phoenix 1's
+      A tier.
     </p>
     <div class="table-columns">
       <div class="table-wrap">

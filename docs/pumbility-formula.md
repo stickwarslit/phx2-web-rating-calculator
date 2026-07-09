@@ -18,10 +18,12 @@ levelBase = 130 + 5 * MIN(levelNumber, 24) + 10 * MAX(0, levelNumber - 24)
 ## Letter Grade Boundaries (score-based)
 
 Phoenix 2 redrew the 900k-950k grade boundaries. Everything from AAA (950k)
-up is unchanged from Phoenix 1.
+up is unchanged from Phoenix 1. Below 900,000, scores are now graded A (not
+A+) down to 750,000, matching Phoenix 1's A tier.
 
 | Score      | Phoenix 1 | Phoenix 2 |
 |------------|-----------|-----------|
+| 750,000    | A         | A         |
 | 900,000    | AA        | A+        |
 | 920,000    | AA+       | AA        |
 | 940,000    | AA+       | AA+       |
