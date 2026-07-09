@@ -16,10 +16,13 @@
 </script>
 
 <nav>
-  <a href="#/">Home</a>
-  <a href="#/pumbility">Title Calculator</a>
-  <a href="#/top50">Top 50</a>
-  <a href="#/pumbility-calculation">Pumbility Docs</a>
+  <div class="nav-links">
+    <a href="#/">Home</a>
+    <a href="#/pumbility">Title Calculator</a>
+    <a href="#/top50">Top 50</a>
+    <a href="#/pumbility-calculation">Pumbility Docs</a>
+  </div>
+  <a class="github-link" href="https://github.com/stickwarslit/phx2-web-rating-calculator" target="_blank" rel="noopener noreferrer">GitHub</a>
 </nav>
 
 <svelte:component this={page} />
@@ -27,13 +30,24 @@
 <style>
   nav {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
     gap: 1rem;
     padding: 1rem;
     border-bottom: 1px solid #ddd;
     font-family: system-ui, sans-serif;
   }
 
+  .nav-links {
+    display: flex;
+    gap: 1rem;
+  }
+
   nav a {
     font-weight: 600;
+  }
+
+  .github-link {
+    white-space: nowrap;
   }
 </style>
