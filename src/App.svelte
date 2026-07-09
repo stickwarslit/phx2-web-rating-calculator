@@ -4,12 +4,14 @@
   import PumbilityCalculator from './routes/PumbilityCalculator.svelte'
   import Top50Calculator from './routes/Top50Calculator.svelte'
   import PumbilityCalculation from './routes/PumbilityCalculation.svelte'
+  import ChartCalculator from './routes/ChartCalculator.svelte'
 
-  const routes: Record<string, typeof Home | typeof PumbilityCalculator | typeof Top50Calculator | typeof PumbilityCalculation> = {
+  const routes: Record<string, typeof Home | typeof PumbilityCalculator | typeof Top50Calculator | typeof PumbilityCalculation | typeof ChartCalculator> = {
     '/': Home,
     '/pumbility': PumbilityCalculator,
     '/top50': Top50Calculator,
     '/pumbility-calculation': PumbilityCalculation,
+    '/chart': ChartCalculator,
   }
 
   $: page = routes[$route] ?? Home
@@ -18,8 +20,9 @@
 <nav>
   <div class="nav-links">
     <a href="#/">Home</a>
-    <a href="#/pumbility">Title Calculator</a>
     <a href="#/top50">Top 50</a>
+    <a href="#/pumbility">Title Calculator</a>
+    <a href="#/chart">Chart Calculator</a>
     <a href="#/pumbility-calculation">Pumbility Docs</a>
   </div>
   <a class="github-link" href="https://github.com/stickwarslit/phx2-web-rating-calculator" target="_blank" rel="noopener noreferrer">GitHub</a>

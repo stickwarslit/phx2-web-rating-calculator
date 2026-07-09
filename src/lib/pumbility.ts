@@ -136,6 +136,11 @@ export function pumbilityFor(levelNumber: number, gradeMultiplier: number, plate
   return levelBaseFor(levelNumber) * (gradeMultiplier + plateMultiplier)
 }
 
+/** Minimum score (out of 1,000,000) required for each grade, keyed by grade name. */
+export const minScoreByGrade: Record<string, number> = Object.fromEntries(
+  phx2GradeBoundaries.map(([minScore, name]) => [name, minScore])
+)
+
 /** Highest title reached for a given total pumbility, or undefined if below the first tier. */
 export function titleReached(chartType: ChartType, totalPumbility: number): Title | undefined {
   const titles = titlesByType[chartType]

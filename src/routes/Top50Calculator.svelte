@@ -1,6 +1,7 @@
 <script lang="ts">
   import { gradeMultipliers, platesByName, levelBaseFor, pumbilityFor, titleReached, phx2GradeForScore, type ChartType } from '../lib/pumbility'
   import { phx2LevelFor } from '../lib/rerates'
+  import PumbilityFormula from '../lib/PumbilityFormula.svelte'
 
   interface ParsedRow {
     difficulty: string
@@ -193,24 +194,9 @@
     This is a calculator for converting your Phoenix 1 scores into a Phoenix 2 Top 50 Pumbility rating. This calculator is built on top of the export from <a href="https://piuscores.arroweclip.se/Account">PIU Scores</a> exported scores csv. To get this file, 1. Make a PIU Scores account 2. Run a score import 3. Go to Account -> Click "DOWNLOAD SCORES". Then, drag the downloaded file below. Note: This calculation is done entirely client side, I will not have access to the file or anything you upload on this site.
   </p>
 
-  <details class="formula">
-    <summary>How pumbility is calculated</summary>
-    <p>
-      <code>levelBase = 130 + 5 * min(level, 24) + 10 * max(0, level - 24)</code><br />
-      <code>pumbility = levelBase * (gradeMultiplier + plateMultiplier)</code>
-    </p>
-    <p>
-      Grade multipliers range from 1.33 (A) to 1.50 (SSS+); plate bonuses range from -0.010 (RG,
-      Single) to 0.020 (PG). Your top 50 scores (overall, and per Single/Double) are summed for the total
-      pumbility shown below. See the <a href="#/pumbility-calculation">full pumbility calculation reference</a>
-      for complete multiplier tables and worked examples.
-    </p>
-    <p class="disclaimer">
-      Disclaimer: Phoenix 2's pumbility formula is not officially documented and has been
-      reverse-engineered from community findings. It may be incomplete or out of date as more
-      is discovered.
-    </p>
-  </details>
+  <PumbilityFormula>
+    Your top 50 scores (overall, and per Single/Double) are summed for the total pumbility shown below.{' '}
+  </PumbilityFormula>
 
   <div
     class="dropzone"
@@ -374,31 +360,6 @@
   .subtitle {
     color: #555;
     margin-top: -0.5rem;
-  }
-
-  .formula {
-    margin: 1rem 0;
-    font-size: 0.9rem;
-    color: #444;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 0.5rem 0.9rem;
-  }
-
-  .formula summary {
-    cursor: pointer;
-    font-weight: 600;
-  }
-
-  .formula code {
-    background: #f0f0f0;
-    padding: 0.1rem 0.3rem;
-    border-radius: 4px;
-  }
-
-  .disclaimer {
-    color: #966400;
-    font-style: italic;
   }
 
   .calc-toggle {

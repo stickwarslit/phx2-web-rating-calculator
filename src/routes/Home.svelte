@@ -2,6 +2,7 @@
   const calculators = [
     { path: '#/pumbility', name: 'Title Calculator', description: 'Passes needed to reach a target pumbility.' },
     { path: '#/top50', name: 'Top 50 Pumbility Calculator', description: 'Upload a scores CSV to compute your top 50 pumbility charts.' },
+    { path: '#/chart', name: 'Chart Calculator', description: 'Pumbility rating for every grade/plate combination on a single chart.' },
     { path: '#/pumbility-calculation', name: 'Pumbility Calculation Reference', description: 'Full documentation of the pumbility formula and weighting tables.' },
   ]
 </script>
