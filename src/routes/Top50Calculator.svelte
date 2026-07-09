@@ -259,22 +259,22 @@
             {#each board.rows as row, i}
               {@const rerated = row.phx2LevelNumber !== row.levelNumber}
               <tr>
-                <td>{i + 1}</td>
-                <td class:rerated>{row.chartType}{String(row.phx2LevelNumber).padStart(2, '0')}</td>
-                <td class:rerated>{rerated ? row.difficulty : '—'}</td>
-                <td>{row.song}</td>
-                <td>{row.grade}</td>
-                <td>{row.plate}</td>
+                <td data-label="#">{i + 1}</td>
+                <td data-label="Chart (Phx2)" class:rerated>{row.chartType}{String(row.phx2LevelNumber).padStart(2, '0')}</td>
+                <td data-label="Chart (Phx1)" class:rerated>{rerated ? row.difficulty : '—'}</td>
+                <td data-label="Song">{row.song}</td>
+                <td data-label="Grade">{row.grade}</td>
+                <td data-label="Plate">{row.plate}</td>
                 {#if showCalc}
                   {@const lvl = row.phx2LevelNumber}
                   {@const step1 = Math.min(lvl, 24)}
                   {@const step2 = Math.max(0, lvl - 24)}
-                  <td class="calc">
+                  <td class="calc" data-label="Calc">
                     130 + 5*{step1}{#if step2 > 0} + 10*{step2}{/if} = {row.levelBase}<br />
                     {row.levelBase} * ({row.gradeMult.toFixed(2)} + {row.plateMult.toFixed(3)})
                   </td>
                 {/if}
-                <td>{row.pumbility.toFixed(2)}</td>
+                <td data-label="Pumbility">{row.pumbility.toFixed(2)}</td>
               </tr>
             {/each}
           </tbody>
@@ -436,6 +436,74 @@
   td.rerated {
     color: #b00;
     font-weight: 600;
+  }
+
+  @media (max-width: 640px) {
+    .table-wrap {
+      overflow-x: visible;
+    }
+
+    table {
+      border: none;
+    }
+
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+
+    tbody, tr {
+      display: block;
+    }
+
+    tr {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+      padding: 0.5rem;
+    }
+
+    td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      border: none;
+      border-bottom: 1px solid #eee;
+      padding: 0.35rem 0.2rem;
+      text-align: right;
+    }
+
+    td:last-child {
+      border-bottom: none;
+    }
+
+    td:nth-child(4) {
+      text-align: right;
+    }
+
+    td::before {
+      content: attr(data-label);
+      font-weight: 600;
+      color: #666;
+      text-align: left;
+      margin-right: auto;
+    }
+
+    td.calc {
+      white-space: normal;
+      justify-content: flex-start;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    td.calc::before {
+      margin-right: 0;
+    }
   }
 
   .skipped {
