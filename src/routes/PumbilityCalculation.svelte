@@ -65,7 +65,7 @@
 
   <section>
     <h2>Grade Multipliers</h2>
-    <p>Only A+ and above count toward pumbility.</p>
+    <p>Only A and above count toward pumbility.</p>
     <div class="table-wrap">
       <table>
         <thead>

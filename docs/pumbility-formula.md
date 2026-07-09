@@ -57,6 +57,7 @@ diverge.
 | AA+   | 1.39 |
 | AA    | 1.37 |
 | A+    | 1.35 |
+| A     | 1.33 |
 
 ## Plate Bonus Multipliers
 

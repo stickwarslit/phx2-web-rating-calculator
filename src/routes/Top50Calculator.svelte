@@ -136,7 +136,7 @@
 
       const gradeMult = gradeMultipliers[grade]
       if (gradeMult === undefined) {
-        newSkipped.push({ raw: cols, reason: `Grade "${grade}" is below A+ and doesn't count toward pumbility` })
+        newSkipped.push({ raw: cols, reason: `Grade "${grade}" is below A and doesn't count toward pumbility` })
         continue
       }
 
@@ -193,7 +193,7 @@
       <code>pumbility = levelBase * (gradeMultiplier + plateMultiplier)</code>
     </p>
     <p>
-      Grade multipliers range from 1.35 (A+) to 1.50 (SSS+); plate bonuses range from 0.000 (RG)
+      Grade multipliers range from 1.33 (A) to 1.50 (SSS+); plate bonuses range from 0.000 (RG)
       to 0.020 (PG). Your top 50 scores (overall, and per Single/Double) are summed for the total
       pumbility shown below. See the <a href="#/pumbility-calculation">full pumbility calculation reference</a>
       for complete multiplier tables and worked examples.

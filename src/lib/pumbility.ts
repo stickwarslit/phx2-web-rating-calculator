@@ -9,7 +9,7 @@ export type Title = [name: string, pumbility: number]
 export const grades: Grade[] = [
   ['SSS+', 1.50], ['SSS', 1.49], ['SS+', 1.48], ['SS', 1.47],
   ['S+', 1.46], ['S', 1.45], ['AAA+', 1.43], ['AAA', 1.41],
-  ['AA+', 1.39], ['AA', 1.37], ['A+', 1.35],
+  ['AA+', 1.39], ['AA', 1.37], ['A+', 1.35], ['A', 1.33],
 ]
 
 export const gradeMultipliers: Record<string, number> = Object.fromEntries(grades)
