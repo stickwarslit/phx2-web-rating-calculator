@@ -191,7 +191,11 @@
 <main>
   <h1>Top 50 Pumbility Calculator</h1>
   <p class="subtitle">
-    This is a calculator for converting your Phoenix 1 scores into a Phoenix 2 Top 50 Pumbility rating. This calculator is built on top of the export from <a href="https://piuscores.arroweclip.se/Account">PIU Scores</a> exported scores csv. To get this file, 1. Make a PIU Scores account 2. Run a score import 3. Go to Account -> Click "DOWNLOAD SCORES". Then, drag the downloaded file below. Note: This calculation is done entirely client side, I will not have access to the file or anything you upload on this site.
+    This is a calculator for converting your Phoenix 1 scores into a Phoenix 2 Top 50 Pumbility rating. This calculator is built on top of the export from <a href="https://piuscores.arroweclip.se/Account">PIU Scores</a> exported scores csv. To get this file, 1. Make a PIU Scores account 2. Run a score import 3. Go to Account -> Click "DOWNLOAD SCORES". Then, drag the downloaded file below. This calculation is done entirely client side, I will not have access to the file or anything you upload on this site.
+  </p>
+
+  <p class="subtitle">
+    Note: The calculator is based off of testing at the advanced and expert level, and may not be accurate for lower levels. 
   </p>
 
   <PumbilityFormula>
