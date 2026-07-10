@@ -155,8 +155,8 @@
       }
 
       const phx2LevelNumber = phx2LevelFor(song, chartType, levelNumber)
-      const levelBase = levelBaseFor(phx2LevelNumber)
-      const pumbility = pumbilityFor(phx2LevelNumber, gradeMult, plateMult)
+      const levelBase = levelBaseFor(phx2LevelNumber, chartType)
+      const pumbility = pumbilityFor(phx2LevelNumber, chartType, gradeMult, plateMult)
 
       newRows.push({ difficulty, chartType, levelNumber, phx2LevelNumber, song, score, phx1Grade, grade, plate, levelBase, gradeMult, plateMult, pumbility })
     }

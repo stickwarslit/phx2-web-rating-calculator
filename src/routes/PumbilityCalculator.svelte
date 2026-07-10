@@ -12,7 +12,7 @@
   type PassesNeeded = number | '50+' | '—'
 
   let levelNumber = 23
-  let chartType: ChartType = 'D' // affects UG/EG/RG plate and AA/A+/A/B grade multipliers
+  let chartType: ChartType = 'D' // affects level base, UG/EG/RG plate, and AA/A+/A/B grade multipliers
   let targetPumbility = 18000
 
   $: titles = titlesByType[chartType]
@@ -21,11 +21,11 @@
 
   $: grades = gradesFor(chartType)
 
-  $: levelBase = levelBaseFor(levelNumber)
+  $: levelBase = levelBaseFor(levelNumber, chartType)
 
   $: matrix = plates.map(([, plateMult]) =>
     grades.map(([, gradeMult]): PassesNeeded => {
-      const p = pumbilityFor(levelNumber, gradeMult, plateMult)
+      const p = pumbilityFor(levelNumber, chartType, gradeMult, plateMult)
       if (p <= 0) return '—'
       const raw = Math.ceil(targetPumbility / p)
       return raw > 50 ? '50+' : raw

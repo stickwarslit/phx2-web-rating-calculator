@@ -146,12 +146,23 @@ export const titlesByType: Record<ChartType, Title[]> = {
   ],
 }
 
-export function levelBaseFor(levelNumber: number): number {
-  return 130 + 5 * Math.min(levelNumber, 24) + 10 * Math.max(0, levelNumber - 24)
+/**
+ * Single charts use the Double level base one level higher (e.g. S22 uses
+ * the same base as D23), so levelNumber is shifted up by 1 for Single before
+ * applying the base formula.
+ */
+export function levelBaseFor(levelNumber: number, chartType: ChartType): number {
+  const effectiveLevel = chartType === 'S' ? levelNumber + 1 : levelNumber
+  return 130 + 5 * Math.min(effectiveLevel, 24) + 10 * Math.max(0, effectiveLevel - 24)
 }
 
-export function pumbilityFor(levelNumber: number, gradeMultiplier: number, plateMultiplier: number): number {
-  return levelBaseFor(levelNumber) * (gradeMultiplier + plateMultiplier)
+export function pumbilityFor(
+  levelNumber: number,
+  chartType: ChartType,
+  gradeMultiplier: number,
+  plateMultiplier: number
+): number {
+  return levelBaseFor(levelNumber, chartType) * (gradeMultiplier + plateMultiplier)
 }
 
 /** Minimum score (out of 1,000,000) required for each grade, keyed by grade name. */

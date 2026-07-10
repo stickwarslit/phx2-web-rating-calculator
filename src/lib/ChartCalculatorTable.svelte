@@ -13,10 +13,10 @@
 
   $: grades = gradesFor(chartType)
 
-  $: levelBase = levelBaseFor(levelNumber)
+  $: levelBase = levelBaseFor(levelNumber, chartType)
 
   $: matrix = grades.map(([, gradeMult]) =>
-    plates.map(([, plateMult]) => pumbilityFor(levelNumber, gradeMult, plateMult))
+    plates.map(([, plateMult]) => pumbilityFor(levelNumber, chartType, gradeMult, plateMult))
   )
 </script>
 
