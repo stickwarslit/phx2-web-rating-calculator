@@ -7,13 +7,16 @@ chart scores.
 ## Level Base
 
 ```
-levelBase = 130 + 5 * MIN(levelNumber, 24) + 10 * MAX(0, levelNumber - 24)
+effectiveLevel = levelNumber + (chartType == Single ? 1 : 0)
+levelBase = 130 + 5 * MIN(effectiveLevel, 24) + 10 * MAX(0, effectiveLevel - 24)
 ```
 
 - Increments by 5 per level from level 1 up through S23/D24.
 - Increments by 10 per level from S24/D25 onward.
 - `levelNumber` is the chart's numeric level (the number after the S/D
-  prefix), regardless of Single/Double.
+  prefix). Single charts use the Double level base one level higher — e.g.
+  S22 uses the same base as D23 — so `levelNumber` is shifted up by 1 for
+  Single before applying the formula above.
 
 ## Letter Grade Boundaries (score-based)
 
@@ -101,11 +104,11 @@ pumbility  = 315 + 4.2       = 319.2
 
 **SSS+ UG on S24:**
 
-> Note: the 5-per-level increment applies through level 24 (S23/D24), and
-> the 10-per-level increment begins at level 25 (S24/D25) — independent of
-> Single/Double. So an S24 chart's level base uses one 10-point step above
+> Note: Single charts use the Double level base one level higher, so S24
+> is treated as effective level 25 (like D25) — one 10-point step above
 > the level-24 base.
 ```
+effectiveLevel = 24 + 1        = 25
 levelBase  = 130 + 5*24 + 10*1 = 260
 gradeBonus = 260 * 1.5         = 390
 plateBonus = 260 * 0.017       = 4.42

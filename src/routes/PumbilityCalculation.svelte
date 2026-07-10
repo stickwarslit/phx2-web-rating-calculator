@@ -3,7 +3,8 @@
 
   const levelRows = [1, 5, 10, 15, 20, 23, 24, 25, 26, 28].map((level) => ({
     level,
-    base: levelBaseFor(level),
+    baseS: levelBaseFor(level, 'S'),
+    baseD: levelBaseFor(level, 'D'),
   }))
 
   const gradeBoundaryRows = phx2GradeBoundaries.slice().reverse()
@@ -45,24 +46,25 @@
   <section>
     <h2>Level Base</h2>
     <p>The base value for a chart, before grade/plate multipliers, scales with chart level:</p>
-    <pre><code>levelBase = 130 + 5 * MIN(level, 24) + 10 * MAX(0, level - 24)</code></pre>
+    <pre><code>levelBase = 130 + 5 * MIN(effectiveLevel, 24) + 10 * MAX(0, effectiveLevel - 24)</code></pre>
     <ul>
       <li>Increments by 5 per level from level 1 up through S23/D24.</li>
       <li>Increments by 10 per level from S24/D25 onward.</li>
       <li>
-        <code>level</code> is the chart's numeric level (the number after the S/D prefix),
-        regardless of Single/Double.
+        <code>effectiveLevel</code> is the chart's numeric level (the number after the S/D
+        prefix) for Double charts, or that number + 1 for Single charts — a Single chart uses
+        the same base as the Double chart one level higher (e.g. S22 uses the same base as D23).
       </li>
     </ul>
 
     <div class="table-wrap">
       <table>
         <thead>
-          <tr><th>Level</th><th>Level Base</th></tr>
+          <tr><th>Level</th><th>Level Base (S)</th><th>Level Base (D)</th></tr>
         </thead>
         <tbody>
-          {#each levelRows as { level, base }}
-            <tr><td>{level}</td><td>{base}</td></tr>
+          {#each levelRows as { level, baseS, baseD }}
+            <tr><td>{level}</td><td>{baseS}</td><td>{baseD}</td></tr>
           {/each}
         </tbody>
       </table>
